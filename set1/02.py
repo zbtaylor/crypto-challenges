@@ -1,13 +1,9 @@
-# take two equal-length buffers and produces their XOR combination
-
-
-def hex_to_bytes(s):
-  return bytes.fromhex(s)
+# take two equal-length buffers and produce their XOR combination
 
 
 def fixed_xor(string, mask):
-	decoded_string = hex_to_bytes(string)
-	decoded_mask = hex_to_bytes(mask)
+	decoded_string = bytes.fromhex(string)
+	decoded_mask = bytes.fromhex(mask)
 	return bytes([a ^ b for a, b in zip(decoded_string, decoded_mask)]).hex()
 
 
