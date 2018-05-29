@@ -1,6 +1,4 @@
-# find the single character key this string was XOR'ed against
-
-
+import base64
 import string
 
 CHAR_FREQUENCIES_EN = {
@@ -33,7 +31,17 @@ CHAR_FREQUENCIES_EN = {
 }
 
 
-def single_byte_xor(string, key):
+def hex_to_base64(s):
+	return base64.b64encode(bytes.fromhex(s))
+
+
+def fixed_xor(string, mask):
+	b_string = bytes.fromhex(string)
+	b_mask = bytes.fromhex(mask)
+	return bytes([a ^ b for a, b in zip(b_string, b_mask)]).hex()
+
+
+def single_xor(string, key):
 	return bytes([a ^ ord(key) for a in bytes.fromhex(string)])
 
 
@@ -72,16 +80,10 @@ def decrypt(hex_string):
 	results = {}
 
 	for c in string.ascii_letters:
-		options[c] = single_byte_xor(hex_string, c)
+		options[c] = single_xor(hex_string, c)
 		char_count = count(options[c])
 		score = compare(char_count, CHAR_FREQUENCIES_EN)
 		if score > 0.013:
 			results[c] = options[c]
 
 	return results
-
-
-example_hex = '1b37373331363f78151b7f2b783431333d78397828372d363c78373e783a393b3736'
-results = decrypt(example_hex)
-
-print(results)
