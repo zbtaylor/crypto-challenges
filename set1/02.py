@@ -2,9 +2,9 @@
 
 
 def fixed_xor(string, mask):
-	decoded_string = bytes.fromhex(string)
-	decoded_mask = bytes.fromhex(mask)
-	return bytes([a ^ b for a, b in zip(decoded_string, decoded_mask)]).hex()
+	b_string = bytes.fromhex(string)
+	b_mask = bytes.fromhex(mask)
+	return bytes([a ^ b for a, b in zip(b_string, b_mask)]).hex()
 
 
 example_string = '1c0111001f010100061a024b53535009181c'
