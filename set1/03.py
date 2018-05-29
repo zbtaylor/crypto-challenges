@@ -3,7 +3,7 @@
 
 import string
 
-freq = {
+CHAR_FREQUENCIES_EN = {
 	'a': 0.08167,
 	'b': 0.01492,
 	'c': 0.02782,
@@ -33,49 +33,55 @@ freq = {
 }
 
 
-def single_byte_xor(string, mask):
-	b_string = bytes.fromhex(string)
-	return bytes([a ^ ord(mask) for a in b_string])
+def single_byte_xor(string, key):
+	return bytes([a ^ ord(key) for a in bytes.fromhex(string)])
 
 
 def count(result):
 	counts = {}
+
 	for c in string.ascii_lowercase:
 		counts[c] = 0
+
 	for c in result:
 		char = chr(c).lower()
 		if char.isalpha():
 			counts[char] += 1
+
 	for i in counts:
 		counts[i] /= len(result)
+
 	return counts
 
 
-def score(count, freq):
+def compare(count, freq):
 	results = []
-	letter_count = 0
+
 	for c in string.ascii_lowercase:
 		if count[c] != 0:
 			remainder = round(count[c] % freq[c], 5)
 			results.append(remainder)
-			++letter_count
 		else:
 			results.append(0)
-	return sum(results) / letter_count
+
+	return sum(results) / 26
 
 
-def decrypt(hex):
+def decrypt(hex_string):
+	options = {}
 	results = {}
+
 	for c in string.ascii_letters:
-		results[c] = single_byte_xor(hex, c)
+		options[c] = single_byte_xor(hex_string, c)
+		char_count = count(options[c])
+		score = compare(char_count, CHAR_FREQUENCIES_EN)
+		if score > 0.013:
+			results[c] = options[c]
+
 	return results
 
 
 example_hex = '1b37373331363f78151b7f2b783431333d78397828372d363c78373e783a393b3736'
 results = decrypt(example_hex)
 
-for r in results:
-	counted = count(results[r])
-	scored = score(counted, freq)
-	if scored < 0.18:
-		print(results[r])
+print(results)
