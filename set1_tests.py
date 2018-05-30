@@ -26,7 +26,9 @@ class TestSet1(unittest.TestCase):
 
 	def test_four(self):
 		hex_lines = s1.build_corpus_from_file('./data/set1challenge4.txt')
-		s1.find_in_list(hex_lines)
+		guess = s1.find_in_list(hex_lines)
+		answer = b'Now that the party is jumping\n'
+		self.assertEqual(guess, answer)
 
 
 if __name__ == '__main__':
