@@ -30,6 +30,59 @@ CHAR_FREQUENCIES_EN = {
 	'z': 0.0009
 }
 
+BIGRAM_FREQUENCIES_EN = {
+	'th': 0.0356,
+	'he': 0.0307,
+	'in': 0.0243,
+	'er': 0.0205,
+	'an': 0.0199,
+	're': 0.0185,
+	'on': 0.0176,
+	'at': 0.0149,
+	'en': 0.0145,
+	'nd': 0.0135,
+	'ti': 0.0134,
+	'es': 0.0134,
+	'or': 0.0128,
+	'te': 0.0120,
+	'of': 0.0117,
+	'ed': 0.0117,
+	'is': 0.0113,
+	'it': 0.0112,
+	'al': 0.0109,
+	'ar': 0.0107,
+	'st': 0.0105,
+	'to': 0.0104,
+	'nt': 0.0104,
+	'ng': 0.0095,
+	'se': 0.0093,
+	'ha': 0.0093,
+	'as': 0.0087,
+	'ou': 0.0087,
+	'io': 0.0083,
+	'le': 0.0083,
+	've': 0.0083,
+	'co': 0.0079,
+	'me': 0.0079,
+	'de': 0.0076,
+	'hi': 0.0076,
+	'ri': 0.0073,
+	'ro': 0.0073,
+	'ic': 0.0070,
+	'ne': 0.0069,
+	'ea': 0.0069,
+	'ra': 0.0069,
+	'ce': 0.0065,
+	'li': 0.0062,
+	'ch': 0.0060,
+	'll': 0.0058,
+	'be': 0.0058,
+	'ma': 0.0057,
+	'si': 0.0055,
+	'om': 0.0055,
+	'ur': 0.0054
+}
+
 
 def hex_to_base64(hexstr):
 	return base64.b64encode(bytes.fromhex(hexstr))
@@ -45,15 +98,30 @@ def single_char_xor(hexstr, key):
 	return bytes([a ^ ord(key) for a in bytes.fromhex(hexstr)])
 
 
-def score_string(bstring, freqs):
+def score_string_char(bstring, freqs):
 	score = 0
+	count = 0
 	for c in bstring:
 		char = chr(c).lower()
 		if char in freqs:
 			score += freqs[char]
-	# checking for spaces seems to work for now
+			count += 1
+	# weed out some obvious nonsense
 	if not b' ' in bstring:
-		score = 0
+		return 0
+	return score * (count / len(bstring))
+
+
+def score_string_bigram(bstring, freqs):
+	score = 0
+	bigrams = []
+	# decode for easy comparison with frequency chart
+	string = bstring.decode("utf-8").replace(' ', '')
+	for i in range(0, len(string)):
+		bigrams.append(string[i:i+2])
+	for b in bigrams:
+		if b in freqs:
+			score += freqs[b]
 	return score
 
 
@@ -62,7 +130,7 @@ def find_single_key(hex_string):
 	old_score = 0
 	for c in string.printable:
 		out = single_char_xor(hex_string, c)
-		score = score_string(out, CHAR_FREQUENCIES_EN)
+		score = score_string_bigram(out, BIGRAM_FREQUENCIES_EN)
 		if score > old_score:
 			old_score = score
 			result = out
