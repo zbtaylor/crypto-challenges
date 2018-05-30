@@ -30,6 +30,7 @@ CHAR_FREQUENCIES_EN = {
 	'z': 0.0006
 }
 
+
 def hex_to_base64(hexstr):
 	return base64.b64encode(bytes.fromhex(hexstr))
 
@@ -46,14 +47,13 @@ def single_char_xor(hexstr, key):
 
 def score_string(bstring, freqs):
 	score = 0
-	count = 0
 	for c in bstring:
-			char = chr(c).lower()
-			if char in freqs:
-					score += freqs[char]
-					count += 1
-			else:
-				count += 1
+		char = chr(c).lower()
+		if char in freqs:
+			score += freqs[char]
+	# checking for spaces seems to work for now
+	if not b' ' in bstring:
+		score = 0
 	return score
 
 
