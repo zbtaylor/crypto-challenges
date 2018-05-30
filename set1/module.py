@@ -2,34 +2,33 @@ import base64
 import string
 
 CHAR_FREQUENCIES_EN = {
-	'a': 0.08167,
-	'b': 0.01492,
-	'c': 0.02782,
-	'd': 0.04253,
-	'e': 0.12702,
-	'f': 0.02228,
-	'g': 0.02015,
-	'h': 0.06094,
-	'i': 0.06966,
-	'j': 0.00153,
-	'k': 0.00772,
-	'l': 0.04025,
-	'm': 0.02406,
-	'n': 0.06749,
-	'o': 0.07507,
-	'p': 0.01929,
-	'q': 0.00095,
-	'r': 0.05987,
-	's': 0.06327,
-	't': 0.09056,
-	'u': 0.02758,
-	'v': 0.00978,
-	'w': 0.02360,
-	'x': 0.00150,
-	'y': 0.01974,
-	'z': 0.00074
+	'a': 0.0834,
+	'b': 0.0154,
+	'c': 0.0273,
+	'd': 0.0414,
+	'e': 0.1260,
+	'f': 0.0203,
+	'g': 0.0192,
+	'h': 0.0611,
+	'i': 0.0671,
+	'j': 0.0023,
+	'k': 0.0087,
+	'l': 0.0424,
+	'm': 0.0253,
+	'n': 0.0680,
+	'o': 0.0770,
+	'p': 0.0166,
+	'q': 0.0009,
+	'r': 0.0568,
+	's': 0.0611,
+	't': 0.0937,
+	'u': 0.0285,
+	'v': 0.0106,
+	'w': 0.0234,
+	'x': 0.0020,
+	'y': 0.0204,
+	'z': 0.0006
 }
-
 
 def hex_to_base64(hexstr):
 	return base64.b64encode(bytes.fromhex(hexstr))
@@ -46,17 +45,16 @@ def single_char_xor(hexstr, key):
 
 
 def score_string(bstring, freqs):
-	count = {}
 	score = 0
-	for c in string.ascii_lowercase:
-		count[c] = 0
+	count = 0
 	for c in bstring:
-		char = chr(c).lower()
-		if char in string.ascii_lowercase:
-			count[char] += 1
-	for c in count:
-		count[c] = abs((count[c] / len(bstring)) - freqs[c])
-	return sum([count[a] for a in count])
+			char = chr(c).lower()
+			if char in freqs:
+					score += freqs[char]
+					count += 1
+			else:
+				count += 1
+	return score
 
 
 def find_single_key(hex_string):
@@ -68,5 +66,4 @@ def find_single_key(hex_string):
 		if score > old_score:
 			old_score = score
 			result = out
-		print(score)
 	return result
