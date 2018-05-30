@@ -41,26 +41,29 @@ def fixed_xor(hexstr, hexmask):
 	return bytes([a ^ b for a, b in zip(b_string, b_mask)])
 
 
-def single_xor(hexstr, key):
+def single_char_xor(hexstr, key):
 	return bytes([a ^ ord(key) for a in bytes.fromhex(hexstr)])
 
 
 def score_string(bstring, freqs):
-		score = 0
-		count = 0
-		for c in bstring:
-				char = chr(c).lower()
-				if char in freqs:
-						score += freqs[char]
-						count += 1
-		return score * (count / len(bstring))
+	count = {}
+	score = 0
+	for c in string.ascii_lowercase:
+		count[c] = 0
+	for c in bstring:
+		char = chr(c).lower()
+		if char in string.ascii_lowercase:
+			count[char] += 1
+	for c in count:
+		count[c] = abs((count[c] / len(bstring)) - freqs[c])
+	return sum([count[a] for a in count])
 
 
-def decrypt(hex_string):
+def find_single_key(hex_string):
 	result = b''
 	old_score = 0
 	for c in string.ascii_letters:
-		out = single_xor(hex_string, c)
+		out = single_char_xor(hex_string, c)
 		score = score_string(out, CHAR_FREQUENCIES_EN)
 		if score > old_score:
 			old_score = score
