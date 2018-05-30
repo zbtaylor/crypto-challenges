@@ -60,7 +60,7 @@ def score_string(bstring, freqs):
 def find_single_key(hex_string):
 	result = b''
 	old_score = 0
-	for c in string.ascii_letters:
+	for c in string.printable:
 		out = single_char_xor(hex_string, c)
 		score = score_string(out, CHAR_FREQUENCIES_EN)
 		if score > old_score:
@@ -69,10 +69,20 @@ def find_single_key(hex_string):
 	return (score, result)
 
 
-def find_in_list(list):
-	for l in list:
-		best = find_single_key(l)
-		print(best)
+def find_in_list(hexlist):
+	result = b''
+	old_score = 0
+	for l in hexlist:
+		if hex_to_base64(l):
+			out = find_single_key(l)
+			if out[0] > old_score:
+				old_score = out[0]
+				result = out[1]
+	return result
+
 
 def build_corpus_from_file(file):
-	return [line.rstrip('\n') for line in open(file)]
+	file = open(file)
+	result = [line.rstrip('\n') for line in file]
+	file.close()
+	return result
