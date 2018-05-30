@@ -22,7 +22,11 @@ class TestSet1(unittest.TestCase):
 		hex_s = '1b37373331363f78151b7f2b783431333d78397828372d363c78373e783a393b3736' 
 		guess = s1.find_single_key(hex_s)
 		answer = b'Cooking MC\'s like a pound of bacon'
-		self.assertEqual(guess, answer)
+		self.assertEqual(guess[1], answer)
+
+	def test_four(self):
+		hex_lines = s1.build_corpus_from_file('./data/set1challenge4.txt')
+		s1.find_in_list(hex_lines)
 
 
 if __name__ == '__main__':

@@ -66,4 +66,13 @@ def find_single_key(hex_string):
 		if score > old_score:
 			old_score = score
 			result = out
-	return result
+	return (score, result)
+
+
+def find_in_list(list):
+	for l in list:
+		best = find_single_key(l)
+		print(best)
+
+def build_corpus_from_file(file):
+	return [line.rstrip('\n') for line in open(file)]
