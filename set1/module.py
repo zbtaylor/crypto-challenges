@@ -115,8 +115,12 @@ def score_string_char(bstring, freqs):
 def score_string_bigram(bstring, freqs):
 	score = 0
 	bigrams = []
+	string = ''
 	# decode for easy comparison with frequency chart
-	string = bstring.decode("utf-8").replace(' ', '')
+	try:
+		string = bstring.decode().replace(' ', '')
+	except:
+		return 0
 	for i in range(0, len(string)):
 		bigrams.append(string[i:i+2])
 	for b in bigrams:
@@ -127,24 +131,24 @@ def score_string_bigram(bstring, freqs):
 
 def find_single_key(hex_string):
 	result = b''
-	old_score = 0
+	best_score = 0
 	for c in string.printable:
 		out = single_char_xor(hex_string, c)
 		score = score_string_bigram(out, BIGRAM_FREQUENCIES_EN)
-		if score > old_score:
-			old_score = score
+		if score > best_score:
+			best_score = score
 			result = out
-	return (score, result)
+	return (best_score, result)
 
 
 def find_in_list(hexlist):
 	result = b''
-	old_score = 0
+	best_score = 0
 	for l in hexlist:
 		if hex_to_base64(l):
 			out = find_single_key(l)
-			if out[0] > old_score:
-				old_score = out[0]
+			if out[0] > best_score:
+				best_score = out[0]
 				result = out[1]
 	return result
 
