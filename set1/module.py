@@ -31,59 +31,40 @@ CHAR_FREQUENCIES_EN = {
 }
 
 
-def hex_to_base64(s):
-	return base64.b64encode(bytes.fromhex(s))
+def hex_to_base64(hexstr):
+	return base64.b64encode(bytes.fromhex(hexstr))
 
 
-def fixed_xor(string, mask):
-	b_string = bytes.fromhex(string)
-	b_mask = bytes.fromhex(mask)
-	return bytes([a ^ b for a, b in zip(b_string, b_mask)]).hex()
+def fixed_xor(hexstr, hexmask):
+	b_string = bytes.fromhex(hexstr)
+	b_mask = bytes.fromhex(hexmask)
+	return bytes([a ^ b for a, b in zip(b_string, b_mask)])
 
 
-def single_xor(string, key):
-	return bytes([a ^ ord(key) for a in bytes.fromhex(string)])
+def single_xor(hexstr, key):
+	return bytes([a ^ ord(key) for a in bytes.fromhex(hexstr)])
 
 
-def count(result):
-	counts = {}
+def score_string(bstring, freqs):
+	count = {}
+	for c in string.ascii_letters:
+		count[c] = 0
 
-	for c in string.ascii_lowercase:
-		counts[c] = 0
-
-	for c in result:
+	for c in bstring:
 		char = chr(c).lower()
-		if char.isalpha():
-			counts[char] += 1
+		if char in string.ascii_letters:
+			count[char] += 1
 
-	for i in counts:
-		counts[i] /= len(result)
-
-	return counts
-
-
-def compare(count, freq):
-	results = []
-
-	for c in string.ascii_lowercase:
-		if count[c] != 0:
-			remainder = round(count[c] % freq[c], 5)
-			results.append(remainder)
-		else:
-			results.append(0)
-
-	return sum(results) / 26
-
+	return sum([count[a] % freqs[b] for a, b in zip(count, freqs)])
 
 def decrypt(hex_string):
-	options = {}
-	results = {}
-
+	result = b''
+	old_score = 0
 	for c in string.ascii_letters:
-		options[c] = single_xor(hex_string, c)
-		char_count = count(options[c])
-		score = compare(char_count, CHAR_FREQUENCIES_EN)
-		if score > 0.013:
-			results[c] = options[c]
+		out = single_xor(hex_string, c)
+		score = score_string(out, CHAR_FREQUENCIES_EN)
+		if score > old_score:
+			old_score = score
+			result = out
 
-	return results
+	return result

@@ -14,15 +14,16 @@ class TestSet1(unittest.TestCase):
 		hex_s = '1c0111001f010100061a024b53535009181c'
 		mask = '686974207468652062756c6c277320657965'
 		guess = s1.fixed_xor(hex_s, mask)
-		answer = '746865206b696420646f6e277420706c6179'
+		answer = bytes.fromhex('746865206b696420646f6e277420706c6179')
 		self.assertEqual(guess, answer)
 
 
 	def test_three(self):
 		hex_s = '1b37373331363f78151b7f2b783431333d78397828372d363c78373e783a393b3736' 
 		guess = s1.decrypt(hex_s)
-		answer = b"Cooking MC's like a pound of bacon"
+		answer = b'Cooking MC\'s like a pound of bacon'
 		self.assertEqual(guess, answer)
+
 
 if __name__ == '__main__':
     unittest.main()
