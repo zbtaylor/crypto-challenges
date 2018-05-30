@@ -46,16 +46,15 @@ def single_xor(hexstr, key):
 
 
 def score_string(bstring, freqs):
-	count = {}
-	for c in string.ascii_letters:
-		count[c] = 0
+		score = 0
+		count = 0
+		for c in bstring:
+				char = chr(c).lower()
+				if char in freqs:
+						score += freqs[char]
+						count += 1
+		return score * (count / len(bstring))
 
-	for c in bstring:
-		char = chr(c).lower()
-		if char in string.ascii_letters:
-			count[char] += 1
-
-	return sum([count[a] % freqs[b] for a, b in zip(count, freqs)])
 
 def decrypt(hex_string):
 	result = b''
@@ -66,5 +65,5 @@ def decrypt(hex_string):
 		if score > old_score:
 			old_score = score
 			result = out
-
+		print(score)
 	return result
