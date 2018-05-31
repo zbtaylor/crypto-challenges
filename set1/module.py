@@ -98,6 +98,18 @@ def single_char_xor(hexstr, key):
 	return bytes([a ^ ord(key) for a in bytes.fromhex(hexstr)])
 
 
+def repeating_xor(string, key):
+	result = bytearray(b'')
+	i = 0
+	for c in string:
+		result.append(ord(c) ^ ord(key[i]))
+		if i < len(key) - 1:
+			i += 1
+		else:
+			i = 0
+	return result.hex()
+
+
 def score_string_char(bstring, freqs):
 	score = 0
 	count = 0
