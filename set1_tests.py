@@ -40,5 +40,13 @@ class TestSet1(unittest.TestCase):
 		self.assertEqual(guess, answer)
 
 
+	def test_six(self):
+		str1 = 'this is a test'
+		str2 = 'wokka wokka!!!'
+		guess = s1.hamming_distance(str1, str2)
+		answer = 37
+		self.assertEqual(guess, answer)
+
+
 if __name__ == '__main__':
     unittest.main()

@@ -118,7 +118,6 @@ def score_string_char(bstring, freqs):
 		if char in freqs:
 			score += freqs[char]
 			count += 1
-	# weed out some obvious nonsense
 	if not b' ' in bstring:
 		return 0
 	return score * (count / len(bstring))
@@ -128,7 +127,6 @@ def score_string_bigram(bstring, freqs):
 	score = 0
 	bigrams = []
 	string = ''
-	# decode for easy comparison with frequency chart
 	try:
 		string = bstring.decode().replace(' ', '')
 	except:
@@ -170,3 +168,21 @@ def build_corpus_from_file(file):
 	result = [line.rstrip('\n') for line in file]
 	file.close()
 	return result
+
+
+def hamming_distance(str1, str2):
+	if len(str1) != len(str2):
+		return False
+	b1 = bytes(str1, 'utf-8')
+	b2 = bytes(str2, 'utf-8')
+	distance = 0
+	bin1 = ''
+	bin2 = ''
+	for i in range(0, len(b1)):
+		bin1 += bin(b1[i])[2:]
+		bin2 += bin(b2[i])[2:]
+		print("str1: " + bin1)
+		print("str2: " + bin2)
+	return sum([ord(a) ^ ord(b) for a, b in zip(bin1, bin2)]) + abs(len(b1) - len(b2))
+
+	
