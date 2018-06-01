@@ -43,6 +43,8 @@ class TestSet1(unittest.TestCase):
 	def test_six(self):
 		str1 = 'this is a test'
 		str2 = 'wokka wokka!!!'
+		# str1 = '111110'
+		# str2 = '000001'
 		guess = s1.hamming_distance(str1, str2)
 		answer = 37
 		self.assertEqual(guess, answer)

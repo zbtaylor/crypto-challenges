@@ -170,19 +170,18 @@ def build_corpus_from_file(file):
 	return result
 
 
+def string_to_bits(string):
+	result = ''
+	for c in string:
+		bits = bin(ord(c))[2:]
+		bits = '00000000'[len(bits):] + bits # makes sure each c is turned in to 8 full bits
+		result += bits
+	return result
+
+
 def hamming_distance(str1, str2):
-	if len(str1) != len(str2):
-		return False
-	b1 = bytes(str1, 'utf-8')
-	b2 = bytes(str2, 'utf-8')
-	distance = 0
-	bin1 = ''
-	bin2 = ''
-	for i in range(0, len(b1)):
-		bin1 += bin(b1[i])[2:]
-		bin2 += bin(b2[i])[2:]
-		print("str1: " + bin1)
-		print("str2: " + bin2)
-	return sum([ord(a) ^ ord(b) for a, b in zip(bin1, bin2)]) + abs(len(b1) - len(b2))
+	bits1 = string_to_bits(str1)
+	bits2 = string_to_bits(str2)
+	return sum([ord(a) ^ ord(b) for a, b in zip(bits1, bits2)])
 
 	
