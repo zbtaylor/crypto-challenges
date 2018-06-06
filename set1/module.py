@@ -1,36 +1,6 @@
-import base64
-import string
+import base64, string
 
-CHAR_FREQUENCIES_EN = {
-	'e': 0.1249,
-	't': 0.0928,
-	'a': 0.0804,
-	'o': 0.0764,
-	'i': 0.0757,
-	'n': 0.0723,
-	's': 0.0651,
-	'r': 0.0628,
-	'h': 0.0505,
-	'l': 0.0407,
-	'd': 0.0382,
-	'c': 0.0334,
-	'u': 0.0273,
-	'm': 0.0251,
-	'f': 0.0240,
-	'p': 0.0214,
-	'g': 0.0187,
-	'w': 0.0168,
-	'y': 0.0166,
-	'b': 0.0148,
-	'v': 0.0105,
-	'k': 0.0054,
-	'x': 0.0023,
-	'j': 0.0016,
-	'q': 0.0012,
-	'z': 0.0009
-}
-
-BIGRAM_FREQUENCIES_EN = {
+BIGRAM_FREQS = {
 	'th': 0.0356,
 	'he': 0.0307,
 	'in': 0.0243,
@@ -88,17 +58,15 @@ def hex_to_base64(hexstr):
 	return base64.b64encode(bytes.fromhex(hexstr))
 
 
-def fixed_xor(hexstr, hexmask):
-	b_string = bytes.fromhex(hexstr)
-	b_mask = bytes.fromhex(hexmask)
-	return bytes([a ^ b for a, b in zip(b_string, b_mask)])
+def fixed_length_xor(hexstr, hexmask):
+	return bytes([a ^ b for a, b in zip(bytes.fromhex(hexstr), bytes.fromhex(hexmask))])
 
 
 def single_char_xor(hexstr, key):
 	return bytes([a ^ ord(key) for a in bytes.fromhex(hexstr)])
 
 
-def repeating_xor(string, key):
+def repeating_key_xor(string, key):
 	result = bytearray(b'')
 	i = 0
 	for c in string:
@@ -110,20 +78,7 @@ def repeating_xor(string, key):
 	return result.hex()
 
 
-def score_string_char(bstring, freqs):
-	score = 0
-	count = 0
-	for c in bstring:
-		char = chr(c).lower()
-		if char in freqs:
-			score += freqs[char]
-			count += 1
-	if not b' ' in bstring:
-		return 0
-	return score * (count / len(bstring))
-
-
-def score_string_bigram(bstring, freqs):
+def score_string(bstring):
 	score = 0
 	bigrams = []
 	string = ''
@@ -134,17 +89,17 @@ def score_string_bigram(bstring, freqs):
 	for i in range(0, len(string)):
 		bigrams.append(string[i:i+2])
 	for b in bigrams:
-		if b in freqs:
-			score += freqs[b]
+		if b in BIGRAM_FREQS:
+			score += BIGRAM_FREQS[b]
 	return score
 
 
-def find_single_key(hex_string):
+def find_single_key(hexstr):
 	result = b''
 	best_score = 0
 	for c in string.printable:
-		out = single_char_xor(hex_string, c)
-		score = score_string_bigram(out, BIGRAM_FREQUENCIES_EN)
+		out = single_char_xor(hexstr, c)
+		score = score_string(out)
 		if score > best_score:
 			best_score = score
 			result = out
@@ -155,11 +110,10 @@ def find_in_list(hexlist):
 	result = b''
 	best_score = 0
 	for l in hexlist:
-		if hex_to_base64(l):
-			out = find_single_key(l)
-			if out[0] > best_score:
-				best_score = out[0]
-				result = out[1]
+		out = find_single_key(l)
+		if out[0] > best_score:
+			best_score = out[0]
+			result = out[1]
 	return result
 
 
