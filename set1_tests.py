@@ -49,7 +49,8 @@ class TestSet1(unittest.TestCase):
 
 	def test_challenge_six(self):
 		corpus = s1.build_corpus_from_file_b64('./data/set1challenge6.txt')
-		print(corpus)
+		keysize = s1.guess_repeating_key_size(corpus, 2, 40)
+		
 
 
 if __name__ == '__main__':

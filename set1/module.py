@@ -193,12 +193,28 @@ def string_to_bits(string):
 	Returns:
 	string: A string of binary without the '0b' prefix. E.g. '000101011101001100'
 	'''
-	result = ''
+	binary = ''
 	for c in string:
 		bits = bin(ord(c))[2:]
 		bits = '00000000'[len(bits):] + bits # makes sure each is a 8 full bits
-		result += bits
-	return result
+		binary += bits
+	return binary
+
+def bytes_to_bits(bytestring):
+	'''Converts a bytes literal to it's binary representation.
+
+	Args:
+	bytestring (bytes): A bytes literal.
+
+	Returns:
+	string: A string of binary without the '0b' prefix.
+	'''
+	binary = ''
+	for b in bytestring:
+		bits = bin(b)[2:]
+		bits = '00000000'[len(bits):] + bits
+		binary += bits
+	return binary
 
 
 def hamming_distance(string1, string2):
@@ -226,13 +242,24 @@ def guess_repeating_key_size(corpus, low, high):
 	returned.
 
 	Args:
-	corpus (bytes): Body of text. TODO: What format is this expected to be in?
+	corpus (bytes): Body of text to eventually be decrypted.
 	low (int): Smallest keysize to start guessing with.
 	high (int): Largest keysize to end guessing with.
 
 	Returns:
 	int: Keysize found to have the lowest normalized hamming distance.
 	'''
+	best_distance = 9999
+	keysize = 0
+	for num_bytes in range(low, high):
+		bin1 = bytes_to_bits(corpus[:num_bytes])
+		bin2 = bytes_to_bits(corpus[num_bytes:num_bytes * 2])
+		new_distance = hamming_distance(bin1, bin2) / num_bytes
+		if new_distance < best_distance:
+			best_distance = new_distance
+			keysize = num_bytes
+	return keysize
+
 
 
 	
