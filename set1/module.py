@@ -153,17 +153,33 @@ def find_in_list(hexlist):
 	return result
 
 
-def build_corpus_from_file(filepath):
-	'''Takes a text file and appends each line to a list
+def build_list_from_file(filepath):
+	'''Puts each line of a text file in a list, regardless of encoding.
 
 	Args:
-	file (str): Path to text file.
+	filepath (str): Path to text file.
 
 	Returns:
 	list: A list containing each line of text as a string.
 	'''
 	file = open(filepath)
 	result = [line.rstrip('\n') for line in file]
+	file.close()
+	return result
+
+
+def build_corpus_from_file_b64(filepath):
+	'''Takes a text file containing base64 and creates a corpus of bytes.
+
+	Args: 
+	filepath (str): Path to text file.
+
+	Returns:
+	bytes: A bytes object containing the contents of the file.
+	'''
+	file = open(filepath)
+	result = b''.join([base64.b64decode(line.rstrip('\n')) for line in file])
+	# base64.b64decode might be the wrong thing to do here?
 	file.close()
 	return result
 
@@ -210,12 +226,13 @@ def guess_repeating_key_size(corpus, low, high):
 	returned.
 
 	Args:
-	corpus (str): Body of text.
+	corpus (bytes): Body of text. TODO: What format is this expected to be in?
 	low (int): Smallest keysize to start guessing with.
 	high (int): Largest keysize to end guessing with.
 
 	Returns:
 	int: Keysize found to have the lowest normalized hamming distance.
 	'''
+
 
 	
