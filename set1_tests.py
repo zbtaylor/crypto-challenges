@@ -41,8 +41,8 @@ class TestSet1(unittest.TestCase):
 
 
 	def test_hamming_distance(self):
-		str1 = 'this is a test'
-		str2 = 'wokka wokka!!!'
+		str1 = s1.string_to_bits('this is a test')
+		str2 = s1.string_to_bits('wokka wokka!!!')
 		guess = s1.hamming_distance(str1, str2)
 		answer = 37
 		self.assertEqual(guess, answer)

@@ -188,14 +188,30 @@ def hamming_distance(str1, str2):
 	'''Computes the hamming distance between two same-length strings.
 
 	Args:
-	str1 (str): First string to compare.
-	str2 (str): Second string to compare.
+	str1 (str): String of 0's and 1's.
+	str2 (str): String of 0's and 1's.
 
 	Returns:
 	int: Sum of bits that differ between the two strings.
 	'''
-	bits1 = string_to_bits(str1)
-	bits2 = string_to_bits(str2)
-	return sum([ord(a) ^ ord(b) for a, b in zip(bits1, bits2)])
+	return sum([ord(a) ^ ord(b) for a, b in zip(str1, str2)])
+
+
+def guess_repeating_key_size(corpus, low, high):
+	'''Finds the most likely repeating key size (in bytes) from a range of sizes.
+
+	For each keysize in range(low, high), breaks the corpus in to two consecutive
+	chunks of keysize number of bytes and computes the hamming distance between
+	each chunk. The keysize with the lowest normalized hamming distance is
+	returned.
+
+	Args:
+	corpus (str): Body of text to search through.
+	low (int): Smallest keysize to start guessing with.
+	high (int): Largest keysize to end guessing with.
+
+	Returns:
+	int: Keysize found to have the lowest normalized hamming distance.
+	'''
 
 	
