@@ -54,7 +54,7 @@ class TestSet1(unittest.TestCase):
 		transposed = s1.transpose_blocks(blocks, keysize)
 		for t in transposed:
 			result = s1.find_single_key(t.hex())
-			print(result[1])
+			print(result[2])
 
 
 if __name__ == '__main__':

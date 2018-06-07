@@ -121,17 +121,19 @@ def find_single_key(hexstr):
 	hexstr (str): The hex string to XOR.
 
 	Returns:
-	(int, bytes): Returns the best score and accompanying result as a tuple.
+	(int, bytes, char): Best score, result, and key as a tuple.
 	'''
 	result = b''
 	best_score = 0
+	key = ''
 	for c in string.printable:
 		out = single_char_xor(hexstr, c)
 		score = score_string(out)
 		if score > best_score:
 			best_score = score
 			result = out
-	return (best_score, result)
+			key = c
+	return (best_score, result, key)
 
 
 def find_in_list(hexlist):
