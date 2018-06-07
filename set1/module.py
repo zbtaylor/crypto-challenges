@@ -260,6 +260,21 @@ def guess_repeating_key_size(corpus, low, high):
 			keysize = num_bytes
 	return keysize
 
+def block_ciphertext(corpus, num_bytes):
+	'''Creates a list of byte literals of a given size.
+
+	Args:
+	corpus (bytes): Body of text to be blocked.
+	num_bytes (int): The size, in bytes, of the blocks to be made.
+
+	Returns:
+	list: Contains num_bytes sized blocks of the corpus.
+	'''
+	blocks = []
+	for i in range(0, len(corpus), num_bytes):
+		blocks.append(corpus[i:i + num_bytes])
+	return blocks
+
 
 
 	
