@@ -1,5 +1,6 @@
 import base64, string
 
+
 BIGRAM_FREQS = {
 	'th': 0.0356, 'he': 0.0307, 'in': 0.0243, 'er': 0.0205, 'an': 0.0199,
 	're': 0.0185, 'on': 0.0176, 'at': 0.0149, 'en': 0.0145, 'nd': 0.0135,
@@ -168,13 +169,13 @@ def build_corpus_from_file(filepath):
 
 
 def string_to_bits(string):
-	'''Converts a string to it's binary representation.
+	'''Converts a string of text to it's binary representation.
 
 	Args:
 	string (str): The string to convert.
 
 	Returns:
-	string: A string containing only ones and zeroes.
+	string: A string of binary without the '0b' prefix. E.g. '000101011101001100'
 	'''
 	result = ''
 	for c in string:
@@ -184,17 +185,20 @@ def string_to_bits(string):
 	return result
 
 
-def hamming_distance(str1, str2):
-	'''Computes the hamming distance between two same-length strings.
+def hamming_distance(string1, string2):
+	'''Computes the hamming distance between two same-length binary strings.
 
 	Args:
-	str1 (str): String of 0's and 1's.
-	str2 (str): String of 0's and 1's.
+	string1 (str): String of binary data. E.g. '000101011101001100'
+	string2 (str): String of binary data. E.g. '001110101110000101'
 
 	Returns:
 	int: Sum of bits that differ between the two strings.
 	'''
-	return sum([ord(a) ^ ord(b) for a, b in zip(str1, str2)])
+	if len(string1) != len(string2):
+		print('Strings must be the same length.')
+		return False
+	return sum([ord(a) ^ ord(b) for a, b in zip(string1, string2)])
 
 
 def guess_repeating_key_size(corpus, low, high):
@@ -206,7 +210,7 @@ def guess_repeating_key_size(corpus, low, high):
 	returned.
 
 	Args:
-	corpus (str): Body of text to search through.
+	corpus (str): Body of text.
 	low (int): Smallest keysize to start guessing with.
 	high (int): Largest keysize to end guessing with.
 
