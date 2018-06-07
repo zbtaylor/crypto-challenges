@@ -260,6 +260,7 @@ def guess_repeating_key_size(corpus, low, high):
 			keysize = num_bytes
 	return keysize
 
+
 def block_ciphertext(corpus, num_bytes):
 	'''Creates a list of byte literals of a given size.
 
@@ -274,6 +275,31 @@ def block_ciphertext(corpus, num_bytes):
 	for i in range(0, len(corpus), num_bytes):
 		blocks.append(corpus[i:i + num_bytes])
 	return blocks
+
+
+def transpose_blocks(blocks, keysize):
+	'''Transpose each byte of each block to a new list of byte literals.
+
+	Args:
+	blocks (list): List of byte literals to be transposed.
+	keysize (int): Number of bytes expected to be in each block.
+
+	Returns:
+	list: A list of length keysize containing byte literals.
+	'''
+	if len(blocks[0]) != keysize:
+		print("Block size does not match key size.")
+		return False
+	transposed = []
+	for i in range(0, keysize):
+		transposed.append([])
+	for block in blocks:
+		for i in range(0, keysize):
+			transposed[i].append(block[i:i + 1])
+	for i in range(0, len(transposed)):
+		transposed[i] = b''.join(transposed[i])
+	return transposed
+
 
 
 

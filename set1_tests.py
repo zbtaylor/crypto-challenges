@@ -52,7 +52,9 @@ class TestSet1(unittest.TestCase):
 		keysize = s1.guess_repeating_key_size(corpus, 2, 40)
 		blocks = s1.block_ciphertext(corpus, keysize)
 		transposed = s1.transpose_blocks(blocks, keysize)
-		print(blocks)
+		for t in transposed:
+			result = s1.find_single_key(t.hex())
+			print(result[1])
 
 
 if __name__ == '__main__':
