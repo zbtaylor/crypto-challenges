@@ -256,7 +256,11 @@ def guess_repeating_key_size(corpus, low, high):
 	for num_bytes in range(low, high):
 		bin1 = bytes_to_bits(corpus[:num_bytes])
 		bin2 = bytes_to_bits(corpus[num_bytes:num_bytes * 2])
-		new_distance = hamming_distance(bin1, bin2) / num_bytes
+		bin3 = bytes_to_bits(corpus[num_bytes * 2:num_bytes * 3])
+		bin4 = bytes_to_bits(corpus[num_bytes * 3:num_bytes * 4])
+		distance1 = hamming_distance(bin1, bin2) / num_bytes
+		distance2 = hamming_distance(bin3, bin4) / num_bytes
+		new_distance = distance1 + distance2 / 2
 		if new_distance < best_distance:
 			best_distance = new_distance
 			keysize = num_bytes
