@@ -202,6 +202,7 @@ def string_to_bits(string):
 		binary += bits
 	return binary
 
+
 def bytes_to_bits(bytestring):
 	'''Converts a bytes literal to it's binary representation.
 
@@ -305,8 +306,3 @@ def transpose_blocks(blocks, keysize):
 	for i in range(0, len(transposed)):
 		transposed[i] = b''.join(transposed[i])
 	return transposed
-
-
-
-
-	

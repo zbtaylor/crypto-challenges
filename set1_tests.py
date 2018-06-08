@@ -47,12 +47,13 @@ class TestSet1(unittest.TestCase):
 		answer = 37
 		self.assertEqual(guess, answer)
 
+
 	def test_challenge_six(self):
 		corpus = s1.build_corpus_from_file_b64('./data/set1challenge6.txt')
 		keysize = s1.guess_repeating_key_size(corpus, 2, 40)
-		print(keysize)
-		# blocks = s1.block_ciphertext(corpus, keysize)
-		# transposed = s1.transpose_blocks(blocks, keysize)
+		blocks = s1.block_ciphertext(corpus, keysize)
+		transposed = s1.transpose_blocks(blocks, keysize)
+		print(len(transposed[0]))
 		# for t in transposed:
 		# 	result = s1.find_single_key(t.hex())
 		# 	print(result[2])
