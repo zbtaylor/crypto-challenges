@@ -189,7 +189,9 @@ def find_single_key(hexstr):
 	key = ''
 	for c in string.printable:
 		out = single_char_xor(hexstr, c)
-		score = score_string(out)
+		score1 = score_string_bigram(out)
+		score2 = score_string_char(out)
+		score = score1 + score2
 		if score > best_score:
 			best_score = score
 			result = out

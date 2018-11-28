@@ -48,40 +48,19 @@ class TestSet1(unittest.TestCase):
 		self.assertEqual(guess, answer)
 
 
-	# def test_challenge_six(self):
-	# 	# Receives a text file of base64 data and returns a bytes object
-	# 	corpus = s1.build_corpus_from_file_b64('./data/set1challenge6.txt')
-	# 	# Guesses best keysize in given range using hamming distance and bigram frequency
-	# 	keysize = s1.guess_repeating_key_size(corpus, 2, 40) # 5
-	# 	# Breaks the corpus into blocks of keysize number of bytes
-	# 	blocks = s1.block_ciphertext(corpus, keysize)
-	# 	# Pad final block so that it is also 5 bytes
-	# 	len_diff = keysize - len(blocks[-1])
-	# 	blocks[-1] += b'\0' * len_diff
-	# 	# Transpose the blocks. So one bytes object of all the first bytes, one of all the second, etc.
-	# 	transposed = s1.transpose_blocks(blocks, keysize)
-	# 	# Brute force single key xor on transposed blocks
-	# 	for t in transposed:
-	# 		result = s1.find_single_key(t.hex())
-	# 		# print(result))
-	# 	xored_back = s1.repeating_key_xor_bytes(corpus, "vanilla")
-	# 	print(xored_back)
-
-
 	def test_reverse_engineer(self):
-		# corpus = s1.build_corpus_from_file_b64('./data/set1challenge6.txt')
-		corpus = s1.build_corpus_from_file_b64('./data/test.txt')
+		corpus = s1.build_corpus_from_file_b64('./data/set1challenge6.txt')
+		# corpus = s1.build_corpus_from_file_b64('./data/test.txt')
 		keysizes = s1.guess_repeating_key_size(corpus, 2, 40)
 		for keysize in keysizes:
-			print(str(keysize) + "\n")
 			blocks = s1.block_ciphertext(corpus, keysize)
 			len_diff = keysize - len(blocks[-1])
 			blocks[-1] += b'\0' * len_diff
 			transposed = s1.transpose_blocks(blocks, keysize)
 			for t in transposed:
 				result = s1.find_single_key(t.hex())
-				print(result)
-		guess = s1.repeating_key_xor_bytes(corpus, 'ICC')
+				# print(result)
+		guess = s1.repeating_key_xor_bytes(corpus, 'irrnn')
 		print(guess)
 
 
