@@ -16,7 +16,11 @@ BIGRAM_FREQS = {
 
 
 ###############################
-# ALWAYS OPERATE ON RAW BYTES #
+# RULES:
+#
+# 1. Always operate on raw bytes, not on encoded strings.
+# 2. Only use hex and base64 for pretty-printing.
+#
 ###############################
 
 
@@ -74,6 +78,27 @@ def repeating_key_xor(string, key):
 	i = 0
 	for c in string:
 		result.append(ord(c) ^ ord(key[i]))
+		if i < len(key) - 1:
+			i += 1
+		else:
+			i = 0
+	return result
+
+
+def repeating_key_xor_bytes(bytestr, key):
+	'''XOR a bytes object against a repeating key.
+
+	Args:
+	bytestr (bytes): The bytes object to be XOR'ed.
+	key (str): The repeating key to be XOR'ed against.
+
+	Returns:
+	bytearray: A bytearray containing the encrypted bytes.
+	'''
+	result = bytearray(b'')
+	i = 0
+	for c in bytestr:
+		result.append(c ^ ord(key[i]))
 		if i < len(key) - 1:
 			i += 1
 		else:
@@ -180,8 +205,22 @@ def build_corpus_from_file_b64(filepath):
 	bytes: A bytes object containing the contents of the file.
 	'''
 	file = open(filepath)
-	result = b''.join([base64.b64decode(line.rstrip('\n')) for line in file])
-	# base64.b64decode might be the wrong thing to do here?
+	result = b''.join([base64.b64decode(line) for line in file])
+	file.close()
+	return result
+
+
+def build_corpus_from_file_ascii(filepath):
+	'''Takes a text file containing ascii and creates a corpus of bytes.
+
+	Args: 
+	filepath (str): Path to text file.
+
+	Returns:
+	bytes: A bytes object containing the contents of the file.
+	'''
+	file = open(filepath)
+	result = ''.join([line for line in file])
 	file.close()
 	return result
 
@@ -197,7 +236,7 @@ def string_to_bits(string):
 	'''
 	binary = ''
 	for c in string:
-		bits = bin(ord(c))[2:]
+		bits = bin(ord(c))[2:] # '[2:]' is here to remove the '0b' prefix
 		bits = '00000000'[len(bits):] + bits # makes sure each is a 8 full bits
 		binary += bits
 	return binary
@@ -253,15 +292,19 @@ def guess_repeating_key_size(corpus, low, high):
 	int: Keysize found to have the lowest normalized hamming distance.
 	'''
 	best_distance = 9999
-	keysize = 0
-	for num_bytes in range(low, high):
+	keysize1 = 0
+	keysize2 = 0
+	keysize3 = 0
+	for num_bytes in range(low, high): # num_bytes is the 'potential' keysize
 		bin1 = bytes_to_bits(corpus[:num_bytes])
 		bin2 = bytes_to_bits(corpus[num_bytes:num_bytes * 2])
 		new_distance = hamming_distance(bin1, bin2) / num_bytes
 		if new_distance < best_distance:
 			best_distance = new_distance
-			keysize = num_bytes
-	return keysize
+			keysize3 = keysize2
+			keysize2 = keysize1
+			keysize1 = num_bytes
+	return (keysize1, keysize2, keysize3)
 
 
 def block_ciphertext(corpus, num_bytes):
