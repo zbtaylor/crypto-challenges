@@ -1,5 +1,13 @@
 import base64, string
 
+CHAR_FREQS = {
+	'a': 0.08167, 'b': 0.01492, 'c': 0.02782, 'd': 0.04253, 'e': 0.12702,
+	'f': 0.02228, 'g': 0.02015, 'h': 0.06094, 'i': 0.06966, 'j': 0.00153,
+	'k': 0.03872, 'l': 0.04025, 'm': 0.02406, 'n': 0.06749, 'o': 0.07507,
+	'p': 0.01929, 'q': 0.00095, 'r': 0.05987, 's': 0.06327, 't': 0.09256,
+	'u': 0.02758, 'v': 0.00978, 'w': 0.05370, 'x': 0.00150, 'y': 0.03978,
+	'z': 0.00074,
+}
 
 BIGRAM_FREQS = {
 	'th': 0.0356, 'he': 0.0307, 'in': 0.0243, 'er': 0.0205, 'an': 0.0199,
@@ -106,7 +114,7 @@ def repeating_key_xor_bytes(bytestr, key):
 	return result
 
 
-def score_string(bstring):
+def score_string_bigram(bstring):
 	'''Score the likelihood that a string contains English text.
 	
 	Decodes the bytes literal and then runs through it looking for common English
@@ -132,6 +140,34 @@ def score_string(bstring):
 	for b in bigrams:
 		if b in BIGRAM_FREQS:
 			score += BIGRAM_FREQS[b]
+	return score
+
+
+def score_string_char(bstring):
+	'''Score the likelihood that a string contains English text.
+	
+	Decodes the bytes literal and then counts the number of each character. Add the
+	frequency of a char to the score every time one is found. Strings with higher
+	scores are more likely to be English.
+
+	Args:
+	bstring (bytes): Bytes literal to be decoded and scored.
+
+	Returns:
+	int: The sum of frequency values for all chars found.
+	'''
+	score = 0
+	chars = []
+	string = ''
+	try:
+		string = bstring.decode().replace(' ', '')
+	except:
+		return 0
+	for i in range(0, len(string)):
+		chars.append(string[i:i+2])
+	for c in chars:
+		if c in CHAR_FREQS:
+			score += CHAR_FREQS[c]
 	return score
 
 
