@@ -3,14 +3,14 @@ import set1.module as s1
 
 class TestSet1(unittest.TestCase):
 
-	def test_challenge_one(self):
+	def test_one(self):
 		hexstr = '49276d206b696c6c696e6720796f757220627261696e206c696b65206120706f69736f6e6f7573206d757368726f6f6d'
 		guess = s1.hex_to_base64(hexstr)
 		answer = b'SSdtIGtpbGxpbmcgeW91ciBicmFpbiBsaWtlIGEgcG9pc29ub3VzIG11c2hyb29t'
 		self.assertEqual(guess, answer)
 
 
-	def test_challenge_two(self):
+	def test_two(self):
 		hexstr = '1c0111001f010100061a024b53535009181c'
 		hexmask = '686974207468652062756c6c277320657965'
 		guess = s1.fixed_length_xor(hexstr, hexmask).hex()
@@ -18,21 +18,21 @@ class TestSet1(unittest.TestCase):
 		self.assertEqual(guess, answer)
 
 
-	def test_challenge_three(self):
+	def test_three(self):
 		hexstr = '1b37373331363f78151b7f2b783431333d78397828372d363c78373e783a393b3736' 
 		guess = s1.find_single_key(hexstr)[1].decode('ascii')
 		answer = "Cooking MC's like a pound of bacon"
 		self.assertEqual(guess, answer)
 
 
-	def test_challenge_four(self):
+	def test_four(self):
 		hex_lines = s1.build_list_from_file('./data/set1challenge4.txt')
 		guess = s1.find_in_list(hex_lines).decode('ascii')
 		answer = 'Now that the party is jumping\n'
 		self.assertEqual(guess, answer)
 
 
-	def test_challenge_five(self):
+	def test_five(self):
 		to_encode = "Burning 'em, if you ain't quick and nimble\nI go crazy when I hear a cymbal"
 		key = 'ICE'
 		guess = s1.repeating_key_xor(to_encode, key).hex()
@@ -49,19 +49,19 @@ class TestSet1(unittest.TestCase):
 
 
 	def test_reverse_engineer(self):
-		corpus = s1.build_corpus_from_file_b64('./data/set1challenge6.txt')
-		# corpus = s1.build_corpus_from_file_b64('./data/test.txt')
+		# corpus = s1.build_corpus_from_file_b64('./data/set1challenge6.txt')
+		corpus = s1.build_corpus_from_file_b64('./data/test.txt')
 		keysizes = s1.guess_repeating_key_size(corpus, 2, 40)
 		for keysize in keysizes:
 			blocks = s1.block_ciphertext(corpus, keysize)
 			len_diff = keysize - len(blocks[-1])
-			blocks[-1] += b'\0' * len_diff
+			blocks[-1] += b'\0' * len_diff # pad final block
 			transposed = s1.transpose_blocks(blocks, keysize)
 			for t in transposed:
 				result = s1.find_single_key(t.hex())
-				# print(result)
-		guess = s1.repeating_key_xor_bytes(corpus, 'irrnn')
-		print(guess)
+				print(result)
+		# guess = s1.repeating_key_xor_bytes(corpus, 'et')
+		# print(guess)
 
 
 if __name__ == '__main__':

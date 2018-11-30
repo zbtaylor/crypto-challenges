@@ -157,18 +157,26 @@ def score_string_char(bstring):
 	int: The sum of frequency values for all chars found.
 	'''
 	score = 0
-	chars = []
+	chars = {}
 	string = ''
 	try:
 		string = bstring.decode().replace(' ', '')
 	except:
 		return 0
 	for i in range(0, len(string)):
-		chars.append(string[i:i+2])
-	for c in chars:
+		c = string[i:i+1]
 		if c in CHAR_FREQS:
-			score += CHAR_FREQS[c]
+			if c in chars:
+				chars[c] += 1
+			else:
+				chars[c] = 1
+	for c in chars:
+		chars[c] = chars[c] / len(string)
+		chars[c] = abs(CHAR_FREQS[c] - chars[c])
+		score += chars[c]
+	score = score / len(string) * 1000
 	return score
+
 
 
 def find_single_key(hexstr):
@@ -189,9 +197,9 @@ def find_single_key(hexstr):
 	key = ''
 	for c in string.printable:
 		out = single_char_xor(hexstr, c)
-		score1 = score_string_bigram(out)
-		score2 = score_string_char(out)
-		score = score1 + score2
+		score = score_string_bigram(out)
+		# score = score_string_char(out)
+		# score = score1 + score2
 		if score > best_score:
 			best_score = score
 			result = out
