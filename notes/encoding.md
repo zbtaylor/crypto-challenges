@@ -1,5 +1,7 @@
 # Python3 Encoding
 
+## Fundamentals
+
 The only thing that a computer can store is bytes.
 
 To store something in a computer, you must first encode it.
@@ -12,9 +14,9 @@ A character string can't be directly stored on a computer. It must be encoded fi
 
 Encoding a character string converts it to a byte string.
 
-There are multiple encodings through which a character string can be converted to a byte string.
+There are multiple encodings through which a character string can be converted to a byte string; like ASCII or UTF-8.
 
-For example, ASCII or UTF-8.
+## Example
 
     'I am a string'.encode('ASCII')
 
