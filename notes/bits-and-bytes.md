@@ -2,14 +2,20 @@
 
 ## Bits
 
+Short for 'binary digit.'
+
 A bit is the smallest unit of storage in a computer.
 
-A bit can store either a 1 or a 0.
-
-Physically it is storing the "electrical state" (there's probably a better term for that) of on (1) or 0 (off).
+Stores the values on or off, represented by the bits 1 and 0.
 
 ## Bytes
 
 A byte is comprised of 8 bits.
 
-One byte can store one character.
+## Binary
+
+A string of bits representing numbers. E.g. `11011011`.
+
+## Hexadecimal
+
+Numeral system comprised of 16 symbols. 0-9 + A-F. Helps engineers convert binary to a more human-readable format.
