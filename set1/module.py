@@ -82,7 +82,7 @@ def repeating_key_xor(string, key):
     return result
 
 
-def score_string(bstring):
+def score_string_bigram(bstring):
     '''Score the likelihood that a string contains English text.
 
     Decodes the bytes literal and then runs through it looking for common English
@@ -129,7 +129,7 @@ def find_single_key(hexstr):
     key = ''
     for c in string.printable:
         out = single_char_xor(hexstr, c)
-        score = score_string(out)
+        score = score_string_bigram(out)
         if score > best_score:
             best_score = score
             result = out
