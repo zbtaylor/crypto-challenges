@@ -54,12 +54,12 @@ def single_char_xor(hexstr, key):
 
     Args:
     hexstr (str): String of hex digits to be encrypted.
-    key (str): The single character to XOR against.
+    key (int): The single int character value (0-255) to XOR against.
 
     Returns:
     bytes: Hexadecimal encoded bytes literal.
     '''
-    return bytes([a ^ ord(key) for a in bytes.fromhex(hexstr)])
+    return bytes([a ^ key for a in bytes.fromhex(hexstr)])
 
 
 def repeating_key_xor(string, key):
@@ -123,18 +123,18 @@ def find_single_key(hexstr):
     hexstr (str): The hex string to XOR.
 
     Returns:
-    (int, bytes, char): Best score, result, and key as a tuple.
+    (int, bytes, int): Best score, result, and key as a tuple.
     '''
     result = b''
     best_score = 0
     key = ''
-    for c in string.printable:
-        out = single_char_xor(hexstr, c)
+    for i in range(0, 255):
+        out = single_char_xor(hexstr, i)
         score = score_string_bigram(out)
         if score > best_score:
             best_score = score
             result = out
-            key = c
+            key = i
     return (best_score, result, key)
 
 
