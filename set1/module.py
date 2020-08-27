@@ -193,10 +193,10 @@ def build_corpus_from_file_b64(filepath):
     Returns:
     bytes: A bytes object containing the contents of the file.
     '''
-    file = open(filepath)
-    result = b''.join([base64.b64decode(line.rstrip('\n')) for line in file])
-    file.close()
-    return result
+    ciphertext = None
+    with open(filepath) as input_file:
+        ciphertext = base64.b64decode(input_file.read())
+    return ciphertext
 
 
 def string_to_bits(string):
@@ -256,8 +256,8 @@ def hamming_distance(bstring1, bstring2):
     '''Computes the hamming distance between two same-length binary strings.
 
     Args:
-    bstring1 (str): Byte literal
-    bstring2 (str): Byte literal
+    bstring1 (byte-str): Byte literal string
+    bstring2 (byte-str): Byte literal string
 
     Returns:
     int: Sum of bits that differ between the two strings.
@@ -265,7 +265,11 @@ def hamming_distance(bstring1, bstring2):
     if len(bstring1) != len(bstring2):
         print('Strings must be the same length.')
         return False
-    return sum([a ^ b for a, b in zip(bstring1, bstring2)])
+    hamming_distance = 0
+    xored_bytes = [a ^ b for a, b in zip(bstring1, bstring2)]
+    for byte in xored_bytes:
+        hamming_distance += sum([1 for bit in bin(byte) if bit == '1'])
+    return hamming_distance
 
 
 def guess_repeating_key_size(corpus, low, high):
