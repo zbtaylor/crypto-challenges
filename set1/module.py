@@ -1,5 +1,6 @@
 import base64
 import string
+import binascii
 
 
 BIGRAM_FREQS = {
@@ -104,7 +105,7 @@ def score_string_bigram(bstring):
     except:
         return 0
     for i in range(0, len(string)):
-        bigrams.append(string[i:i+2])
+        bigrams.append(string[i:i+2].lower())
     for b in bigrams:
         if b in BIGRAM_FREQS:
             score += BIGRAM_FREQS[b]
@@ -182,7 +183,6 @@ def build_corpus_from_file_b64(filepath):
     '''
     file = open(filepath)
     result = b''.join([base64.b64decode(line.rstrip('\n')) for line in file])
-    # base64.b64decode might be the wrong thing to do here?
     file.close()
     return result
 
@@ -222,7 +222,7 @@ def bytes_to_bits(bytestring):
     return binary
 
 
-def hamming_distance(string1, string2):
+def hamming_distance_str(string1, string2):
     '''Computes the hamming distance between two same-length binary strings.
 
     Args:
@@ -232,10 +232,28 @@ def hamming_distance(string1, string2):
     Returns:
     int: Sum of bits that differ between the two strings.
     '''
-    if len(string1) != len(string2):
+    bstring1 = binascii.a2b_qp(string1)
+    bstring2 = binascii.a2b_qp(string2)
+    if len(bstring1) != len(bstring2):
         print('Strings must be the same length.')
         return False
-    return sum([ord(a) ^ ord(b) for a, b in zip(string1, string2)])
+    return sum([a ^ b for a, b in zip(bstring1, bstring2)])
+
+
+def hamming_distance(bstring1, bstring2):
+    '''Computes the hamming distance between two same-length binary strings.
+
+    Args:
+    bstring1 (str): Byte literal
+    bstring2 (str): Byte literal
+
+    Returns:
+    int: Sum of bits that differ between the two strings.
+    '''
+    if len(bstring1) != len(bstring2):
+        print('Strings must be the same length.')
+        return False
+    return sum([a ^ b for a, b in zip(bstring1, bstring2)])
 
 
 def guess_repeating_key_size(corpus, low, high):
@@ -257,8 +275,8 @@ def guess_repeating_key_size(corpus, low, high):
     best_distance = 9999
     keysize = 0
     for num_bytes in range(low, high):
-        bin1 = bytes_to_bits(corpus[:num_bytes])
-        bin2 = bytes_to_bits(corpus[num_bytes:num_bytes * 2])
+        bin1 = corpus[:num_bytes]
+        bin2 = corpus[num_bytes:num_bytes * 2]
         new_distance = hamming_distance(bin1, bin2) / num_bytes
         if new_distance < best_distance:
             best_distance = new_distance
