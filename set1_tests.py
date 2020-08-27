@@ -24,11 +24,11 @@ class TestSet1(unittest.TestCase):
         answer = "Cooking MC's like a pound of bacon"
         self.assertEqual(guess, answer)
 
-    # def test_challenge_four(self):
-    #     hex_lines = s1.build_list_from_file('./data/set1challenge4.txt')
-    #     guess = s1.find_in_list(hex_lines).decode('ascii')
-    #     answer = 'Now that the party is jumping\n'
-    #     self.assertEqual(guess, answer)
+    def test_challenge_four(self):
+        hex_lines = s1.build_list_from_file('./data/set1challenge4.txt')
+        guess = s1.find_in_list(hex_lines).decode('ascii')
+        answer = 'Now that the party is jumping\n'
+        self.assertEqual(guess, answer)
 
     # def test_challenge_five(self):
     #     to_encode = "Burning 'em, if you ain't quick and nimble\nI go crazy when I hear a cymbal"

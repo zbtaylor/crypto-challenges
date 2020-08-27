@@ -2,6 +2,16 @@ import base64
 import string
 import binascii
 
+CHAR_FREQS = {
+    'a': .08167, 'b': .01492, 'c': .02782, 'd': .04253,
+    'e': .12702, 'f': .02228, 'g': .02015, 'h': .06094,
+    'i': .06094, 'j': .00153, 'k': .00772, 'l': .04025,
+    'm': .02406, 'n': .06749, 'o': .07507, 'p': .01929,
+    'q': .00095, 'r': .05987, 's': .06327, 't': .09056,
+    'u': .02758, 'v': .00978, 'w': .02360, 'x': .00150,
+    'y': .01974, 'z': .00074, ' ': .13000
+}
+
 
 BIGRAM_FREQS = {
     'th': 0.0356, 'he': 0.0307, 'in': 0.0243, 'er': 0.0205, 'an': 0.0199,
@@ -83,33 +93,35 @@ def repeating_key_xor(string, key):
     return result
 
 
-def score_string_bigram(bstring):
-    '''Score the likelihood that a string contains English text.
+def score_string_char(bstring):
+    return sum([CHAR_FREQS.get(chr(byte), 0) for byte in bstring.lower()])
 
-    Decodes the bytes literal and then runs through it looking for common English
-    bigrams (sequence of two adjacent letters). Add the frequency of a bigram to
-    the score every time one is found. Strings with higher scores are more likely
-    to be English.
+# def score_string_bigram(bstring):
+#     '''Score the likelihood that a string contains English text.
 
-    Args:
-    bstring (bytes): Bytes literal to be decoded and scored.
+#     Decodes the bytes literal and then runs through it looking for common English
+#     bigrams (sequence of two adjacent letters). Add the frequency of a bigram to
+#     the score every time one is found. Strings with higher scores are more likely
+#     to be English.
 
-    Returns:
-    int: The sum of frequency values for all bigrams found.
-    '''
-    score = 0
-    bigrams = []
-    string = ''
-    try:
-        string = bstring.decode().replace(' ', '')
-    except:
-        return 0
-    for i in range(0, len(string)):
-        bigrams.append(string[i:i+2].lower())
-    for b in bigrams:
-        if b in BIGRAM_FREQS:
-            score += BIGRAM_FREQS[b]
-    return score
+#     Args:
+#     bstring (bytes): Bytes literal to be decoded and scored.
+
+#     Returns:
+#     int: The sum of frequency values for all bigrams found.
+#     '''
+#     bigrams = []
+#     string = ''
+#     try:
+#         string = bstring.decode().replace(' ', '')
+#     except:
+#         return 0
+#     for i in range(0, len(string)):
+#         bigrams.append(string[i:i+2].lower())
+#     for b in bigrams:
+#         if b in BIGRAM_FREQS:
+#             score += BIGRAM_FREQS[b]
+#     return score
 
 
 def find_single_key(hexstr):
@@ -130,7 +142,7 @@ def find_single_key(hexstr):
     key = ''
     for i in range(0, 255):
         out = single_char_xor(hexstr, i)
-        score = score_string_bigram(out)
+        score = score_string_char(out)
         if score > best_score:
             best_score = score
             result = out
@@ -175,7 +187,7 @@ def build_list_from_file(filepath):
 def build_corpus_from_file_b64(filepath):
     '''Takes a text file containing base64 and creates a corpus of bytes.
 
-    Args: 
+    Args:
     filepath (str): Path to text file.
 
     Returns:
