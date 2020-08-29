@@ -350,10 +350,8 @@ def transpose_blocks(blocks, keysize):
         return False
     transposed = []
     for i in range(0, keysize):
-        transposed.append([])
+        transposed.append(b'')
     for block in blocks:
-        for i in range(0, keysize):
-            transposed[i].append(block[i])
-    for i in range(0, len(transposed)):
-        transposed[i] = b''.join(transposed[i])
+        for i in range(0, len(block)):
+            transposed[i] += bytes([block[i]])
     return transposed
