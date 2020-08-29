@@ -48,7 +48,8 @@ class TestSet1(unittest.TestCase):
         corpus = s1.build_corpus_from_file_b64('./data/set1challenge6.txt')
         keysize = s1.guess_repeating_key_size(corpus, 2, 41)
         blocks = s1.block_ciphertext(corpus, keysize)
-        # transposed = s1.transpose_blocks(blocks, keysize)
+        transposed = s1.transpose_blocks(blocks, keysize)
+        print(transposed)
         # for t in transposed:
         #     result = s1.find_single_key(t.hex())
         #     print(result)
