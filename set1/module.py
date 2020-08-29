@@ -290,29 +290,48 @@ def guess_repeating_key_size(corpus, low, high):
     '''
     best_distance = 9999
     keysize = 0
+
     for num_bytes in range(low, high):
-        bin1 = corpus[:num_bytes]
-        bin2 = corpus[num_bytes:num_bytes * 2]
-        new_distance = hamming_distance(bin1, bin2) / num_bytes
+        distances = []
+        chunks = [corpus[i:i + num_bytes]
+                  for i in range(0, len(corpus), num_bytes)]
+
+        while True:
+            try:
+                chunk1 = chunks[0]
+                chunk2 = chunks[1]
+                distance = hamming_distance(chunk1, chunk2) / num_bytes
+                distances.append(distance)
+
+                # del from the source, not using the references chunk1, chunk2
+                del chunks[0]
+                del chunk[1]
+
+            except Exception as e:
+                break
+
+        new_distance = sum(distances) / len(distances)
+
         if new_distance < best_distance:
             best_distance = new_distance
             keysize = num_bytes
+
     return keysize
 
 
-def block_ciphertext(corpus, num_bytes):
+def block_ciphertext(corpus, keysize):
     '''Creates a list of byte literals of a given size.
 
     Args:
     corpus (bytes): Body of text to be blocked.
-    num_bytes (int): The size, in bytes, of the blocks to be made.
+    keysize (int): The size, in bytes, of the blocks to be made.
 
     Returns:
-    list: Contains num_bytes sized blocks of the corpus.
+    list: Contains keysize sized blocks of the corpus.
     '''
     blocks = []
-    for i in range(0, len(corpus), num_bytes):
-        blocks.append(corpus[i:i + num_bytes])
+    for i in range(0, len(corpus), keysize):
+        blocks.append(corpus[i:i + keysize])
     return blocks
 
 
@@ -334,7 +353,7 @@ def transpose_blocks(blocks, keysize):
         transposed.append([])
     for block in blocks:
         for i in range(0, keysize):
-            transposed[i].append(block[i:i + 1])
+            transposed[i].append(block[i])
     for i in range(0, len(transposed)):
         transposed[i] = b''.join(transposed[i])
     return transposed
